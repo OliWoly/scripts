@@ -28,8 +28,8 @@ if [ $# -eq 1 ]; then
         read -p "Are you sure you want to convert all images in directory: '$directory'? [y/N]: " makeSure
         if [[ $makeSure == "y" || $makeSure == "Y" ]]; then
 
-            fullCount=0;
             # FULL COUNT FOR COUNTER AT THE OUTPUT
+            fullCount=0;
             for file in "$1"/*; do
                 fileEnding=$(echo "$file" | grep -oP 'IMG_.+\K\.\w+')
 
@@ -57,22 +57,24 @@ if [ $# -eq 1 ]; then
                 fi # end file ending if statement
             done
 
-
+            mkdir compressed
+            mv *"$endingFinal" compressed
         else
             echo "Abort."
         fi  # makesure if statement
+    else
+        echo "File Convert:"
+        file=$1
+
+        fileName=$(echo "$file" | grep -oP '\KIMG_\d+')
+        fileEnding=$(echo "$file" | grep -oP 'IMG_.+\K\.\w+')
+
+        heif-convert "$fileName$endingOriginal" "$fileName$endingIntermediate" > /dev/null
+        avifenc -q 53 "$fileName$endingIntermediate" "$fileName$endingFinal" > /dev/null
+        rm "$fileName$endingIntermediate"
+        echo "Done"
     fi      # directory batch statement
-else
-    echo "File Convert:"
 
-    fileName=$(echo "$file" | grep -oP '\KIMG_\d+')
-    fileEnding=$(echo "$file" | grep -oP 'IMG_.+\K\.\w+')
-
-    echo "Starting Convert"
-    heif-convert "$fileName$endingOriginal" "$fileName$endingIntermediate" > /dev/null
-    avifenc -q 53 "$fileName$endingIntermediate" "$fileName$endingFinal" > /dev/null
-    rm "$fileName$endingIntermediate"
-    lla | grep "$fileName$endingFinal"
 
 fi          # $#=2 if statement
 
