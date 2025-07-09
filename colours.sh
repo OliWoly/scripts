@@ -71,3 +71,11 @@ On_IPurple=$'\033[0;105m'  # Purple
 On_ICyan=$'\033[0;106m'    # Cyan
 On_IWhite=$'\033[0;107m'   # White
 
+
+# Misc Escape Codes
+TAB=$'\t'                  # 1 Tab
+DTAB=$'\t\t'                 # 2 Tabs
+TTAB=$'\t\t\t'                 # 3 Tabs
+QTAB=$'\t\t\t\t'                 # 4 Tabs
+QSTAB=$'\t\t\t\t  '
+
