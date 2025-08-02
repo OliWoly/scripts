@@ -12,7 +12,7 @@ echo -e "\n${QSTAB}${BWhite}Custom Commands:"
 echo -e "${QSTAB}----------------${CLEARLINE}"
 while IFS= read -r line; do
     line2=$(echo "$line" | grep -Po 'alias\s+\K\w+')
-    [[ -n $line2 ]] && echo -e "${QSTAB}${IYellow}$line2"    # prints only when line not empy
+    [[ -n $line2 ]] && echo -e "${QSTAB}${IYellow}$line2${Color_Off}"    # prints only when line not empy
 
-done < ~/.zshrc
+done < ~/.bashrc
 echo ""
