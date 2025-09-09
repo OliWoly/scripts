@@ -18,15 +18,12 @@ sudo pacman -S --noconfirm \
 	nvtop \
 	base-devel \
 	git \
-	vim \
 	nvim \
 	wget \
 	curl \
 	net-tools \
-	yay \
 	discord \
 	steam \
-	jetbrains-toolbox \
 	kitty \
 	obsidian \
 	amd-ucode \
@@ -38,6 +35,7 @@ sudo pacman -S --noconfirm \
 
 yay -S spotify
 yay -S lmstudio
+yay -S jetbrains-toolbox
 
 
 sudo usermod -aG wheel $USER  # if not already added
