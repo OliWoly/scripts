@@ -1,0 +1,9 @@
+To get audio working, follow steps 8.2:
+  Passing audio from virtual machine to host via PipeWire directly
+
+Add to xml like it says then change qemu conf to use the user.
+  IMPORTANT: actually restart the daemon to change it lol.
+    sudo systemctl restart libvirtd.service
+
+Speakers should work through the nvidia audio drivers on windows now 
+

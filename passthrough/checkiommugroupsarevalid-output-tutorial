@@ -1,0 +1,55 @@
+
+
+
+
+The following is the output produced by the command in the name:
+
+"
+IOMMU Group 31:
+	0d:00.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD/ATI] Navi 10 XL Downstream Port of PCI Express Switch [1002:1479] (rev 10)
+IOMMU Group 32:
+	0e:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc. [AMD/ATI] Navi 31 [Radeon RX 7900 XT/7900 XTX/7900 GRE/7900M] [1002:744c] (rev c8)
+IOMMU Group 33:
+	0e:00.1 Audio device [0403]: Advanced Micro Devices, Inc. [AMD/ATI] Navi 31 HDMI/DP Audio [1002:ab30]
+IOMMU Group 34:
+	0f:00.0 VGA compatible controller [0300]: NVIDIA Corporation GA104 [GeForce RTX 3070] [10de:2484] (rev a1)
+	0f:00.1 Audio device [0403]: NVIDIA Corporation GA104 High Definition Audio Controller [10de:228b] (rev a1)
+IOMMU Group 35:
+	10:00.0 Non-Essential Instrumentation [1300]: Advanced Micro Devices, Inc. [AMD] Starship/Matisse PCIe Dummy Function [1022:148a]
+"
+
+It is important to see that both the gpus are in seperate IOMMU groups. Otherwise passing through the gpu would have to be paired
+with whatever other device is in the same group. Here it appears that both gpus are alone and seperate in their groups.
+
+Gemini OUtput:
+Yes, your output from the script is correct for listing your IOMMU groups and the devices within them. 👍
+
+The script is a standard method recommended in the Arch Linux wiki (and elsewhere) for checking how your devices are grouped by the IOMMU (Input/Output Memory Management Unit).
+
+The important takeaway for PCI Passthrough is:
+
+1. The Output Format is Standard
+
+    Each section starts with IOMMU Group X:.
+
+    Devices within that group are listed on subsequent, indented lines with their PCI bus address (e.g., 0f:00.0), device type, and vendor/device IDs ([10de:2484]).
+
+2. Assessing Your Groups for Passthrough
+
+For successful PCI passthrough, the device(s) you want to pass through to the virtual machine must be in their own IOMMU group or grouped only with devices you are also willing to pass through (or devices that can be safely ignored, like PCI bridges that don't enforce grouping, though this requires the ACS patch or is often complex).
+
+Looking at your output, here are some groups of interest:
+IOMMU Group	Device(s)	Status for Passthrough
+32	0e:00.0 Radeon RX 7900 XT/... (VGA)	Good! This is one part of your GPU.
+33	0e:00.1 Navi 31 HDMI/DP Audio (Audio)	Good! This is the other part of that GPU. (You'd pass through both 32 and 33).
+34	0f:00.0 NVIDIA GeForce RTX 3070 (VGA) 0f:00.1 GA104 High Definition Audio (Audio)	Good! Both components of this GPU are in the same group (Group 34), which is ideal. You can pass through the entire Group 34.
+15	01:00.0 NVMe PCIe SSD	Good! Your first NVMe drive is isolated.
+25	04:00.0 NVMe PCIe SSD	Good! Your second NVMe drive is isolated.
+26, 27, 28, 29	Various Network Controllers (Ethernet, Wi-Fi)	Good! Your network controllers are isolated.
+22	09:00.1 Matisse USB 3.0 Host Controller 09:00.3 Matisse USB 3.0 Host Controller ...and other devices (03:08.0, 09:00.0)	Mixed. The USB controllers are grouped with PCI bridges and a Non-Essential Instrumentation device. Passthrough might work, but you'd need to pass all of Group 22 to the VM, including the bridge. This can be complex if the bridge is critical for other non-passed-through devices.
+
+Conclusion
+
+Your output indicates your two graphics cards (Group 32/33 and Group 34) are in groups that appear passable to a VM, which is the main goal of the PCI passthrough process. You can select either the AMD or NVIDIA GPU to pass through (assuming the one you keep is powering your host system's display).
+
+You can proceed with the next steps in the Arch wiki, which involve finding the Vendor/Device IDs for the devices you want to pass through (e.g., 10de:2484 and 10de:228b for the RTX 3070).

@@ -30,6 +30,9 @@ sudo pacman -S --noconfirm \
 	firefox-developer-edition \
 	sdl3 \
 	os-prober \
+	thunderbird \
+	fastfetch \
+	pavucontrol \
 
 
 
