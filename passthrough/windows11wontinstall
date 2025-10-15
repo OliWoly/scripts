@@ -1,0 +1,3 @@
+If win11 wont install on virtmngr.
+Its probably because of unmet sys req.
+TPM issue - pacman install swtpm, then in vm options -> tpm add emulated, CRB, 2.0
